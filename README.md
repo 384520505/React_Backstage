@@ -1,3 +1,35 @@
+一、antd的配置使用
+    1.将package.json文件中的scripts对象中的 
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        改变实际上是为加载项目根目录中的 config-overrides.js 中的配置项
+
+    2.自定义主题
+        由于antd的样式是通过less文件设计的，但是antd中并没有 加载less文件的 loader 因此需要安装 less less-loader 包
+
+    3.react-router-dom中 Switch模块是 阻止路由继续匹配的，当路由匹配一个后，就不再继续向下匹配
+
+    4.通过 const Item = Form.Item 方式引入的Item 不能放在 import 关键字的前面
+
+    5.高阶组件:
+        本质：就是一个函数；
+        接受一个组件(被包装组件)，返回一个新的组件(包装组件)，包装组件会向被包装组件传递特定的属性；
+        作用：扩展组件的功能；
+        高阶组件也是一个高阶函数：接受一个组件函数，返回一个新的组件函数
+
+    6.表单验证的方式：
+        （1）声明式验证，在rules中生命相关的验证规则即可
+        （2）自定义验证，在rules定义一个 validator 函数，在函数中实现自定义的验证规则
+
+
+
+
+
+二、开发经验总结
+    1.在设置网页样式之前，可以到github中搜索 reset.css 获取css样式重置的文件
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
