@@ -2,9 +2,24 @@ import React, { Component } from 'react';
 
 // 导入user存储文件
 import memoryUtils from '../../utils/memoryUtils.js';
+import LeftNav from '../../components/left-nav/leftNav.jsx'
 
 // Redirect 在render方法中实现页面的跳转
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
+
+import { Layout } from 'antd';
+
+// 导入路由组件
+import Home from '../home/home';
+import Bar from '../charts/bar';
+import Line from '../charts/line';
+import Pie from '../charts/pie';
+import Category from '../product/category';
+import Product from '../product/product';
+import Role from '../role/role';
+import User from '../user/user';
+
+const { Header, Footer, Sider, Content } = Layout;
 
 class Admin extends Component {
 
@@ -15,10 +30,34 @@ class Admin extends Component {
 
     render() {
         // 若内存的不存在user登陆信息，跳转到登陆页面
-        if(!memoryUtils.user || !memoryUtils.user._id){
+        if (!memoryUtils.user || !memoryUtils.user._id) {
             return <Redirect to='/login' />
         }
-        return <div>Admin{memoryUtils.user.username}</div>
+        return <div style={{ height: '100%' }}>
+            <Layout style={{ height: '100%' }}>
+                <Sider>
+                    <LeftNav />
+                </Sider>
+                <Layout>
+                    <Header style={{height:'80px',backgroundColor:'rgb(181, 223, 255)'}}>Header</Header>
+                    <Content>
+                        <Switch>
+                            <Route path='/home' component={Home} />
+                            <Route path='/bar' component={Bar} />
+                            <Route path='/line' component={Line} />
+                            <Route path='/pie' component={Pie} />
+                            <Route path='/category' component={Category} />
+                            <Route path='/product' component={Product} />
+                            <Route path='/role' component={Role} />
+                            <Route path='/user' component={User} />
+                            {/* 当以上路由都没有匹配，默认进入home页面 */}
+                            <Redirect to='/home' />
+                        </Switch>
+                    </Content>
+                    <Footer style={{textAlign:'center', backgroundColor:'#ddd'}}>React 后台管理系统&nbsp;&nbsp;&nbsp;&nbsp;开发者:Taohouqi</Footer>
+                </Layout>
+            </Layout>
+        </div>
     }
 }
 

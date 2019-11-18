@@ -21,6 +21,12 @@
     6.表单验证的方式：
         （1）声明式验证，在rules中生命相关的验证规则即可
         （2）自定义验证，在rules定义一个 validator 函数，在函数中实现自定义的验证规则
+            函数的参数包含三个 rules、value、callback
+                // rules:验证规则
+                // value:表单中的值
+                // callback:验证的回调函数
+                // 当callback不传参数时，默认表示验证通过
+                // 当callback传参数时，根据验证规则是否匹配返回相关的信息
 
     7.axios请求函数返回的promise对象
 
@@ -59,6 +65,8 @@
         导出 react-router-dom 包中的 Redirect 标签，实现页面的跳转
         跳转方式: <Redircet to='path' />
 
+    12.对于非路由组件，若想获取路由组件的 history、location、match 对象，使用withRouter 高阶函数 将该组件包裹即可
+
 
 
 
@@ -78,6 +86,11 @@
     以上写法是错误的
 
     3.在使用localStorage 对登陆信息进行存储时，在不同版本的浏览器中可能出现不兼容的情况，最好使用 store 第三方包
+
+
+
+三、难点
+    1.列表下的子类表选中后，再次刷新页面，该父类表自动展开
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

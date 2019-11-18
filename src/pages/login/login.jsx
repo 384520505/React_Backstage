@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './login.less'
 
 // 导入图片文件
-import Logo from './img/logo.png';
+import Logo from '../../assets/images/logo.png';
 
 // 导入 Redirect 
 import { Redirect } from 'react-router-dom';
