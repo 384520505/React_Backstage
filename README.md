@@ -22,12 +22,62 @@
         （1）声明式验证，在rules中生命相关的验证规则即可
         （2）自定义验证，在rules定义一个 validator 函数，在函数中实现自定义的验证规则
 
+    7.axios请求函数返回的promise对象
+
+    8.请求跨域问题
+        1）跨域的三种情况:
+            网路协议的不同：http、https
+            主机名的不同
+            端口的不同
+        2）解决跨域问题
+            在使用脚手架创建的 react App 中在package.json文件中添加，服务器代理配置即可
+            添加 proxy:'http://localhost:5000'   目标服务器地址;
+
+            在服务器端使用 cors 使服务器支持跨域请求；
+
+            jsonp方式请求，但jsonp方式 只能发送 GET 方式的请求
+
+    9.history对象的用法：
+        history对象中有三个常用的方法： push、replace、goBack
+        1）push() 方法：实现页面的跳转，该跳转的方式是挨个跳转；
+            如：有 A   B   C   D  四个页面，从A -> B , B -> C , C -> D ,在这个过程中顺序是一个接着一个，不会出现中间断链的情况；在调用 goBack() 方法是，是挨个进行返回的；
+        2）replace() 方法: 实现页面的跳转，该跳转的方式不是挨个跳转；
+            如： A   B   C   D  四个页面，从A -> B , B -> C , C -> D ,在这个 D 过程中，若调用goBack()函数，那么 D 就直接代替 C 然后跳转到 B ，将 C 直接省略
+        3）goBack() 方法: 实现页面的返回效果
+
+    10.实现用户登陆的存储
+        1）在utils文件夹下创建memoryUtils.js文件，用于在内存中存储用户的登陆信息
+            优点：读取、存储速度非常块
+            缺点：当用户退出网页、刷新网页、关闭浏览器后，再次打开，用户登陆信息将丢失
+        2）在utils文件夹下创建storageUtils.js文件，用于在本地磁盘中存储用户的登陆信息
+            优点：长久保存，若用户不进行手动删除，不会丢失
+            缺点：读取、存储的速度比较慢
+    在开发中因该结合使用两种方法，在网站的根文件中 将storageUtils.js 文件中的信息 读取出来 存储到 memoryUtils.js 中，
+    后续在使用时，直接在内存中读取即可
+
+    11.在 render方法中实现页面的跳转的方法：
+        导出 react-router-dom 包中的 Redirect 标签，实现页面的跳转
+        跳转方式: <Redircet to='path' />
+
 
 
 
 
 二、开发经验总结
     1.在设置网页样式之前，可以到github中搜索 reset.css 获取css样式重置的文件
+
+    2.jsx语法中不允许在 {} 中解析一整个都对象
+        如：user:{
+            _id:'1234567',
+            username:'zhangsan',
+            age:'18'
+            }
+        render(){
+            return <div> { user } </div>
+        }
+    以上写法是错误的
+
+    3.在使用localStorage 对登陆信息进行存储时，在不同版本的浏览器中可能出现不兼容的情况，最好使用 store 第三方包
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

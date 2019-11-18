@@ -5,8 +5,17 @@ import './login.less'
 // 导入图片文件
 import Logo from './img/logo.png';
 
+// 导入 Redirect 
+import { Redirect } from 'react-router-dom';
+
 // 导入表单组件
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
+
+// 导入ajax请求文件
+import { ReqLogin } from '../../api/index.js';
+// 导入user存储文件
+import memoryUtils from '../../utils/memoryUtils.js';
+import storageUtils from '../../utils/storageUtils';
 
 class Login extends Component {
 
@@ -19,7 +28,29 @@ class Login extends Component {
         // 对所有表单数据进行验证
         this.props.form.validateFields((err, values) => {
             if(!err){
-                console.log('表单验证成功',values);
+                // console.log('表单验证成功',values);
+                // 发送ajax请求(登陆请求)
+                const { username,password } = values;
+                ReqLogin(username, password)
+                .then(data => {
+                    // console.log('成功了',Response.data);
+                    // 请求成功
+                    if(data.status === 0){
+                        message.success('请求成功');
+                        // 将user信息在内存中进行存储
+                        memoryUtils.user = data.data;
+                        // 将user信息在本地磁盘中进行存储
+                        storageUtils.saveUser(data.data);
+                        // 跳转到后台页面
+                        this.props.history.replace('/');
+                    } else{
+                        // 提示错误信息
+                        message.error(data.msg);
+                    }
+                })
+                // .catch(error => {
+                //     console.log('失败了',error.message);
+                // });
             } else{
                 console.log('验证失败');
             }
@@ -32,10 +63,6 @@ class Login extends Component {
         // // 获取表单项的输入数据
         // const values = form.getFieldsValue();
         // console.log(values);
-
-
-
-
     }
 
 
@@ -63,6 +90,12 @@ class Login extends Component {
     render() {
         const form = this.props.form;
         const { getFieldDecorator } = form;
+        
+        // 在渲染登陆页面时，判断内存中是否有 user 登陆的信息
+        // 多存在 user的登陆信息，跳转到 后台管理界面
+        if(memoryUtils.user && memoryUtils.user._id){
+            return <Redirect to='/' />
+        }
         return (
             <div className='login-page'>
                 <header>
