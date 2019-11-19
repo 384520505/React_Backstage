@@ -19,7 +19,9 @@ import Product from '../product/product';
 import Role from '../role/role';
 import User from '../user/user';
 
-const { Header, Footer, Sider, Content } = Layout;
+import ContentHeader from '../../components/header/content-header';
+
+const {Header, Footer, Sider, Content } = Layout;
 
 class Admin extends Component {
 
@@ -39,8 +41,10 @@ class Admin extends Component {
                     <LeftNav />
                 </Sider>
                 <Layout>
-                    <Header style={{height:'80px',backgroundColor:'rgb(181, 223, 255)'}}>Header</Header>
-                    <Content>
+                    <Header style={{height:'80px',backgroundColor:'#ffffff',padding:'0'}}>
+                        <ContentHeader />
+                    </Header>
+                    <Content style={{margin:'20px',backgroundColor:'#ffffff'}}>
                         <Switch>
                             <Route path='/home' component={Home} />
                             <Route path='/bar' component={Bar} />
