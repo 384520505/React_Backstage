@@ -12,6 +12,15 @@ export const ReqLogin = (username,password) => ajax( '/login',{ username, passwo
 // 添加用户请求
 export const ReqAddUser = (user) => ajax('/manage/user/add', user , 'POST');
 
+// 获取商品的一级分类数据
+export const ReqCategoryData =(parentId) => ajax('/manage/category/list',{parentId},'GET');
+
+// 更新品类名称
+export const ReqUpdateCategory = ({ categoryId,categoryName }) => ajax('/manage/category/update',{ categoryId,categoryName },'POST');
+
+// 添加商品类别
+export const ReqAddCategory = ({ parentId,categoryName }) => ajax('/manage/category/add',{ parentId,categoryName },'POST');
+
 
 
 // 使用 jsonp 发送ajax请求，获取天气信息

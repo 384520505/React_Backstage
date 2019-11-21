@@ -36,7 +36,7 @@ class Admin extends Component {
             return <Redirect to='/login' />
         }
         return <div style={{ height: '100%' }}>
-            <Layout style={{ height: '100%' }}>
+            <Layout style={{ minHeight:'100%' }}>
                 <Sider>
                     <LeftNav />
                 </Sider>
@@ -58,7 +58,7 @@ class Admin extends Component {
                             <Redirect to='/home' />
                         </Switch>
                     </Content>
-                    <Footer style={{textAlign:'center', backgroundColor:'#ddd'}}>React 后台管理系统&nbsp;&nbsp;&nbsp;&nbsp;开发者:Taohouqi</Footer>
+                    <Footer style={{textAlign:'center', backgroundColor:'#ddd',zIndex:1}}>React 后台管理系统&nbsp;&nbsp;&nbsp;&nbsp;开发者:Taohouqi</Footer>
                 </Layout>
             </Layout>
         </div>
