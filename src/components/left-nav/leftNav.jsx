@@ -26,7 +26,7 @@ class LeftNav extends React.Component {
                 </Menu.Item>);
             } else {
                 // 获取子列表中是否有元素的key值与当前路由的 pathname的值相同，若相同将该子元素获取出来
-                const cItem = item.children.find(item => {return item.key === this.props.location.pathname});
+                const cItem = item.children.find(item => {return this.props.location.pathname.indexOf(item.key) === 0});
                 // 判断该子元素是否存在，将其父元素的key值进行存储
                 if(cItem){
                     // 向组件中添加openKey属性
@@ -56,11 +56,16 @@ class LeftNav extends React.Component {
     }
 
     render() {
+        let path = this.props.location.pathname;
+        // 解决在商品详情页无法选中 侧边栏对应 选项的问题
+        if(path.indexOf('/product') === 0){
+            path = '/product';
+        }
         return <Sider>
             <Header />
             <Menu theme="dark" 
             // 选中当前路由对应的列表元素
-            selectedKeys={[this.props.location.pathname]} 
+            selectedKeys={[path]} 
             defaultOpenKeys={[this.openKey]}
             mode="inline">
                 {/* 使用 map函数渲染菜单列表 */}

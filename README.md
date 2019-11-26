@@ -69,6 +69,189 @@
 
     13.表单验证的方法，是存在 Form组件中的 form 对象的 ，若需要 验证表单 ，需要使用高阶组件，向当前组件中传递 form 对象
 
+    14.实现 table 的后台分页功能： 
+        在 table 中的 pagination 对象里  实现 onChange 事件，该事件是页码改变时调用，该事件函数会传递两个参数：
+            1）page :当的页码
+            2）pagSize：每页的显示数量
+
+    15.从一个页面 跳转到另一个页面 时将数据 也传递到另一个页面的方法：
+        使用 路由组件自带的 history.push('path', data) 将数据传递到另一个页面
+
+    16.Promise.all() 方法的介绍：
+        Promise.all() 方法 传入一个 数组，若该数组中 具有 多个 Promise 的对象，则该方法将同时进行多个异步的执行操作，这样的效率极其高，
+            当这些 Promise 对象在执行过程中，有一个执行失败，则该方法的将进入 reject() 函数中，返回的失败结果是，第一个失败的Promise对象
+
+    17.图片上传过程中，在handleChange函数中 ，传入的参数 file 、 fileList 在这两个参数中， 
+        file !== fileList[fileList.length -1] 的，因为这两个是不同的对象，但是实际渲染的是 fileList ，
+        但是在渲染中，file 中的某些属性，不是实际需要的，需要进行改变才行，因此要对 fileList中的每一个文件的某些属性都进行改变才行
+
+    18. 文件上传组件中的某些属性的讲解：
+        // 图片上传的地址
+        action="/manage/img/upload"
+        //  图片上传列表的内建样式 有： picture-card(卡片样式)、text(文本样式)、picture(列表样式)
+        listType="picture-card"
+        //  接收上传图片的类型 image/* 所有的图片类型
+        accept='image/*'
+        // 上传的图片 发送到后台的参数名称
+        name='image'
+        // 图片列表
+        fileList={fileList}
+
+        fileList: [
+            {
+                uid: '-1', // 图片文件的唯一标识，一般设置为 负数，防止和内部产生的 id 冲突
+                name: 'image.png',  //图片文件的名称
+                status: 'done', // 当前图片文件的状态 ， 其状态有 ：uploading：正在上传状态、 done: 已上传完成状态、 error：上传出错、 removed：已删除状态
+                url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',  // 图片上传后的地址
+            },
+        ],
+
+    19.父组件如何获取子组件的属性或方法
+        在父组件为 子组件 绑定 ref 属性，通过ref得到子组件对象，然后调用其方法 （具体ref的使用查看官网文档）
+
+    20.在React中 将html 格式的字符串 渲染成 html 标签的方法
+        <span dangerouslySetInnerHTML={{__html:detail}}></span>
+
+    21.在添加一条数据后，并且服务器将该添加的数据返回给前端了，在此可以不使用Ajax重新发送请求来刷新列表，具体的方式如下：
+         // 这是 react官方 赞成的 方式 ，基于原本的状态更新数据
+            this.setState(state => ({
+                roles: [...state.roles, result.data]
+            }));
+
+            state.roles 是原有状态中的数据，
+            该方式的好处是，在不改变 roles 状态的前提下，向 roles 中添加数据
+
+    22.setState() 更新状态的两种写法：
+        1）setState(updater,[callback]),
+            updater为 返回stateChange对象的函数 (state,props) => stateChange
+            接收的state 和 props 为当前组件的 状态
+        2）setState(stateChange,[callback])
+            setChange为对象，
+            callback是可选的回调函数，在状态更新之前且界面更新之后才执行
+        总结：
+            setState() 中对象的方式的更新状态是函数方式的简写形式
+                如果新状态不依赖于原状态 ===》 使用对象方式
+                    如： this.setState({count:3});
+                如果新状态依赖于原状态 ===》 使用函数方式
+                    如： this.setState((state) => ({count:state.count + 1}));
+            如果需要在setState() 后获取最新的转台数据，在第二个callback函数中读取
+
+    23.setState() 更新状态是同步还是异步？
+        1）执行setState() 函数的位置？
+            在react控制的回调函数中：生命周期钩子函数中 / react 事件监听回调函数中
+            非react控制的异步回调函数中：定时器回调 / 原生事件监听回调 / promise回调 / ...
+        2）异步 or 同步 ？
+            在react中的相关回调中 setState() 是异步的
+                如以下几种情况是异步的：
+                    <!-- react 的生命周期钩子函数中 -->
+                    1.componentWillMount(){this.setState({count:2})}
+                    <!-- react 的事件监听回调中 -->
+                    2.onClick = () => {this.setState((state) => ({count: state.count + 1}))}
+            在其他异步回调中 setState() 是同步的
+                如以下几种情况是同步的：
+                    <!-- 在定时器回调中 -->
+                    1.handleOk = () => {
+                        setTimeOut(() => {
+                            this.setState((state) => ({count: state.count + 1}));
+                        },1000);
+                      }
+                    <!-- 在原生事件监听回调中 -->
+                    2.const div = this.refs.div;
+                      div.onclick = () => {
+                          this.setState((state) => ({count: state.count + 1}));
+                      }
+                    <!-- 在 promise 回调中 -->
+                    3.handleOk = () => {
+                        promise.resolve()
+                        .then(() => {
+                            this.setState((state) => ({count:state.count + 1}));
+                        });
+                      }
+        关于异步的setState() 
+            1) 多次调用如何处理？
+                setState({}): 采用对象的方式改变状态，在多次调用的情况下，会将这些改变的状态合并为一次更新，然后只调用一次 render() 函数更新界面 ---在此过程中，多次改变的状态，将合并为一次对状态进行改变，界面的更新也将合并成一次进行更新
+                    如：onClick = () => {
+                        <!-- 采用函数的方式更新状态 参数 state 或者 props, updater 函数中接收的 state 和 props 都保证为最新 -->
+                        this.setState((state) => ({count:state.count + 1}));
+
+                        this.setState((state) => ({count:state.count + 1}));
+
+                        <!-- 以上通过函数的方式更新state的状态，更新后 state.count 的值将加 2 -->
+                    }
+                    在 render() 函数中 count的值将在原有的基础上加 2
+
+                    onClick = () => {
+                        <!-- 采用对象的方式更新状态  -->
+                        this.setState({count: this.state.count + 1});
+
+                        this.setState({count: this.state.count + 1});
+                        
+                        <!-- 通过以上的两种方式 更新的state的状态，将对需要更新的状态进行合并后在更新，因此更新后的 count 的值 将只加 1 -->
+                    }
+                    在 render() 函数中 count 的值 将在原有的基础上加 1
+
+            2) setState(fn): 采用函数的方式改变状态，在多次调用的情况下，对这些改变的状态不进行合并，而是多次更新     状态，然后只调用一次 render() 函数更新界面---在次过程中，多次改变的状态将不行合并，而是多次改变状     态，界面的更新将合并为一次进行更新
+
+    24.setState() 函数的面试题  ( @数字：表示第几次执行 )
+        state={count:0}
+
+        componentDidMount(){
+            this.setState({count: this.state.count + 1});  //this.state.count --> 0
+            this.setState({count: this.state.count + 1});  //this.state.count --> 0
+            console.log(this.state.count);  @2-->0
+
+            this.setState((state) => {count: state.count + 1});  //this.state.count -->2
+            this.setState((state) => {count: state.count + 1});  //this.state.count -->3
+            console.log(this.state.count);  @3-->0
+
+            setTimeOut(() => {
+                this.setState({count: this.state.count + 1});  //this.state.count -->6
+                console.log('setTime1',this.state.count);  @9-->6
+
+                this.setState({count: this.state.count + 1});   //this.state.count -->7
+                console.log('setTime2',this.state.count);  @11-->7
+            },0);
+
+            promise.resolve()
+            .then(() => {
+                this.setState({count: this.state.count + 1});  //this.state.count -->4
+                console.log('promise1',this.state.count);  @6-->4
+
+                this.setState({count: this.state.count + 1});  //this.state.count -->5
+                console.log('promise2',this.state.count);  @7-->6
+            });
+        }
+
+        render(){
+            console.log(this.state.count)  @1-->0   @4-->3  @5-->4  @6-->5  @8-->6  @10-->7
+
+            return (<div>
+                hello
+            </div>);
+        }
+    
+    25.Component存在的问题？
+        1）父组件重新执行 render() 函数，子组件也会重新执行子组件的 render() 函数，即使没有发生任何状态的改变
+        2）若在父组件中执行 setState() 函数，即使没有更新任何状态，也会重新执行 render() 函数
+
+    26.解决Component存在的问题
+        1.原因：组件的shouldComponentUpdate() 生命周期函数 默认返回的true ，即使数据没有发生变化， render() 函数都会重新执行
+        2.解决方法1：重写shouldComponentUpdate()函数， 判断数据是否有发生变化，若发生变化，返回true， 否则返回false
+            如：shouldComponentUpdate(nextPorps, nextState){
+                    if(this.props.xxx === nextProps.xxx && this.state.xxx === nextState.xxx){
+                        return false;
+                    }else {
+                        return true;
+                    }
+                }
+        3.解决方法2：使用PureComponent 代替 Component 
+        4.说明：一般都使用 PureComponent 来优化组件性能
+
+    27.PureComponent的基本原理
+        1.对 shouldComponentUpdate() 方法重写，实现性能优化
+        2.对组件的 新/旧 state 和 props 中的数据进行 浅比较，如果都没有发生变化，那么shouldComponentUpdate() 方     法将返回 false ，否则返回 true
+        3.一旦shouldComponentUpdate() 返回false ，组件将不再执行用户更新的 render() 函数
+
 
 
 
@@ -107,8 +290,14 @@
 
 
 
+
 三、难点
     1.列表下的子类表选中后，再次刷新页面，该父类表自动展开
+
+
+四、未解决的Bug 
+    1.在修改商品界面中，所属类别 为自动获取数据
+    2.在商品管理中，点击 详情 和 修改 按钮后，在点击返回按钮，无法返回到原有的页面
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

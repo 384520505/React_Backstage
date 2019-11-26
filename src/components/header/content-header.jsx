@@ -52,7 +52,7 @@ class Header extends React.Component {
             if (item.key === path) {
                 this.title = item.title;
             } else if (item.children) { //若存在该元素存储children属性，遍历children
-                const citem = item.children.find(citem => citem.key === path);
+                const citem = item.children.find(citem => path.indexOf(citem.key) !== -1);
                 if (citem) {
                     this.title = citem.title
                 }
