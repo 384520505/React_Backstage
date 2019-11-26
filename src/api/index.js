@@ -8,9 +8,6 @@ import ajax from './ajax.js';
 // 登陆请求
 export const ReqLogin = (username,password) => ajax( '/login',{ username, password }, 'POST');
 
-// 添加用户请求
-export const ReqAddUser = (user) => ajax('/manage/user/add', user , 'POST');
-
 // 获取商品的分类数据
 export const ReqCategoryData =(parentId) => ajax('/manage/category/list',{parentId},'GET');
 
@@ -46,6 +43,15 @@ export const ReqAddRole = (roleName) => ajax('/manage/role/add', { roleName } , 
 
 // 角色授权
 export const ReqUpdateRole = (newRole) => ajax('/manage/role/update',newRole,'POST');
+
+// 获取用户列表
+export const ReqGetUsers = () => ajax('/manage/user/list');
+
+// 删除用户
+export const ReqDeteleUser = (userId) => ajax('/manage/user/delete',{ userId } ,'POST');
+
+// 添加用户
+export const ReqAddOrUpdateUser = (user) => ajax('/manage/user/' + (user._id ? 'update' : 'add'),user,'POST');
 
 // 使用 jsonp 发送ajax请求，获取天气信息
 export const ReqWeather = (city) => {
