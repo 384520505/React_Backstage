@@ -1,19 +1,31 @@
 // 角色管理组件
 
 import React from 'react';
+import propTypes from 'prop-types';
 
 import { Card, Button, Table, Modal, message } from 'antd';
 
 import { ReqGetRoles, ReqAddRole, ReqUpdateRole } from '../../api/index';
 
-import memoryUntils from '../../utils/memoryUtils'
+// import memoryUntils from '../../utils/memoryUtils'
+// import storageUtils from '../../utils/storageUtils';
 
 import { getDate } from '../../utils/dateUtils'
 
 import AddRoleForm from './add-form';
 import UpdateRole from './update-form';
 
+import { connect } from 'react-redux';
+import {logout} from '../../redux/actions.js';
+
 class Role extends React.Component {
+
+    static propsTypes = {
+        // 当前登陆的用户
+        user: propTypes.object.isRequired,
+        // 退出登陆
+        logout:propTypes.func.isRequired,
+    }
 
     constructor(props) {
         super(props);
@@ -45,12 +57,12 @@ class Role extends React.Component {
             {
                 title: '创建时间',
                 dataIndex: 'create_time',
-                render:(create_time) => getDate(create_time)
+                render: (create_time) => getDate(create_time)
             },
             {
                 title: '授权时间',
                 dataIndex: 'auth_time',
-                render:(auth_time) => auth_time ? getDate(auth_time) : null,
+                render: (auth_time) => auth_time ? getDate(auth_time) : null,
             },
             {
                 title: '授权人',
@@ -131,23 +143,39 @@ class Role extends React.Component {
         const role = this.state.role;
         role.menus = this.menus.current.getMenus();
         // 获取授权人
-        role.auth_name = memoryUntils.user.username;
+        // role.auth_name = memoryUntils.user.username;
+        role.auth_name = this.props.user.username;
         // 获取授权时间
         role.auth_time = Date.now();
 
         // 发送更新请求
         const result = await ReqUpdateRole(role);
 
-        if(result && result.status === 0){
+        if (result && result.status === 0) {
             // 隐藏弹出框
-            this.setState({isShowUpdate:false});
-            // 刷新当前角色列表
-            this.getRoles();
-            message.success('角色授权成功');
-        }else{
+            this.setState({ isShowUpdate: false });
+            // 如果更新的角色的权限是当前 登陆用户所对应的权限，更新后 立即退出登陆
+            // if (role._id === memoryUntils.user.role_id) {
+            if (role._id === this.props.user.role_id) {
+                // 清除本地存储的用户信息
+                // memoryUntils.user = {};
+                // this.props.user = {};
+                // storageUtils.removeUser();
+                // // 跳转到登陆页面
+                // this.props.history.replace('/login');
+
+                this.props.logout();
+                message.success('当前登陆用户的权限已改，请重新登陆！');
+
+            } else {
+                // 刷新当前角色列表
+                this.getRoles();
+                message.success('角色授权成功');
+            }
+        } else {
             message.error('角色授权失败');
         }
-        
+
     }
 
     // 获取当前选中的 角色的权限 列表
@@ -185,7 +213,12 @@ class Role extends React.Component {
                         dataSource={this.state.roles}
                         // 选择功能的配置
                         // selectedRowKeys : 被选中的选项
-                        rowSelection={{ type: 'radio', selectedRowKeys: [role._id] }}
+                        rowSelection={{ 
+                            type: 'radio', 
+                            selectedRowKeys: [role._id] ,
+                            onSelect:(role) => {
+                                this.setState({role});
+                            }}}
                         // onRow事件
                         onRow={this.onRow}
                     />
@@ -211,4 +244,7 @@ class Role extends React.Component {
     }
 };
 
-export default Role;
+export default connect(
+    state => ({user:state.user}),
+    {logout}
+)(Role);

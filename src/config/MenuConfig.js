@@ -3,7 +3,8 @@ const MenuList = [
     {
         title: '首页',
         key: '/home',
-        icon: 'home'
+        icon: 'home',
+        isPublic:true, // 该用户分类是否公开
     },
     {
         title: '商品',

@@ -2,20 +2,36 @@
 
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import porpTypes from 'prop-types';
+
+import { connect } from 'react-redux';
+import { logout } from '../../redux/actions.js';
 
 import './content-header.less';
 
 import { getFormatDate } from '../../utils/dateUtils';
-import memoryUtils from '../../utils/memoryUtils';
-import storageUtils from '../../utils/storageUtils';
+// import memoryUtils from '../../utils/memoryUtils';
+// import storageUtils from '../../utils/storageUtils';
 import { ReqWeather } from '../../api/index';
-import MenuList from '../../config/MenuConfig';
+// import MenuList from '../../config/MenuConfig';
 import LinkButton from '../../components/link-button/linkButton';
+
 import { Modal } from 'antd';
 
 const { confirm } = Modal;
 
 class Header extends React.Component {
+
+
+    static propsTypes = {
+        // 头部标题
+        headTitle: porpTypes.string.isRequired,
+        // 当前登陆的用户
+        userL: porpTypes.object.isRequired,
+        // 用户退出登录
+        logout: porpTypes.func.isRequired,
+    }
+
     constructor() {
         super();
 
@@ -31,7 +47,7 @@ class Header extends React.Component {
     // 获取用户信息
     getUser() {
         this.setState({
-            currentUser: memoryUtils.user.username,
+            currentUser: this.props.user.username,
         });
     };
 
@@ -43,34 +59,38 @@ class Header extends React.Component {
 
 
     // 获取当前路由对应的 title
-    getTitle() {
-        const path = this.props.location.pathname;
-        this.title = '';
-        // 遍历 MenuList 查找与 path 对应的 元素的 title
-        MenuList.forEach(item => {
-            // 若找到该元素将该元素的title取出
-            if (item.key === path) {
-                this.title = item.title;
-            } else if (item.children) { //若存在该元素存储children属性，遍历children
-                const citem = item.children.find(citem => path.indexOf(citem.key) !== -1);
-                if (citem) {
-                    this.title = citem.title
-                }
-            }
-        });
-    };
+    // 该方法被 redux 中的 headTitle 属性代替
+
+    // getTitle() {
+    //     const path = this.props.location.pathname;
+    //     this.title = '';
+    //     // 遍历 MenuList 查找与 path 对应的 元素的 title
+    //     MenuList.forEach(item => {
+    //         // 若找到该元素将该元素的title取出
+    //         if (item.key === path) {
+    //             this.title = item.title;
+    //         } else if (item.children) { //若存在该元素存储children属性，遍历children
+    //             const citem = item.children.find(citem => path.indexOf(citem.key) !== -1);
+    //             if (citem) {
+    //                 this.title = citem.title
+    //             }
+    //         }
+    //     });
+    // };
 
     // 是否退出函数
     isExit = () => {
         confirm({
             content: '确认退出？',
             onOk: () => {
-                // 点击确认将 内存和磁盘中的user数据清除
-                memoryUtils.user = {};
-                storageUtils.removeUser();
+                // // 点击确认将 内存和磁盘中的user数据清除
+                // this.props.user = {};
+                // storageUtils.removeUser();
 
-                // 跳转到登陆页面
-                this.props.history.replace('/login');
+                // // 跳转到登陆页面
+                // this.props.history.replace('/login');
+
+                this.props.logout();
             }
         });
     }
@@ -105,7 +125,7 @@ class Header extends React.Component {
 
 
         // 获取title
-        this.getTitle();
+        // this.getTitle();
 
         return (<div className='content-header'>
             <div className="header-top">
@@ -114,7 +134,8 @@ class Header extends React.Component {
                 <LinkButton onClick={this.isExit}>退出</LinkButton>
             </div>
             <div className="header-bottom">
-                <div className="header-bottom-left">{this.title}</div>
+                {/* <div className="header-bottom-left">{this.title}</div> */}
+                <div className="header-bottom-left">{this.props.headTitle}</div>
                 <div className="header-bottom-right">
                     <span>{this.state.getNowDate}</span>
                     <img src={this.state.dayPictureUrl} alt="weather" />
@@ -126,4 +147,8 @@ class Header extends React.Component {
 }
 
 const HeaderRouter = withRouter(Header);
-export default HeaderRouter;
+export default connect(
+    // 将 redux 中的 状态数据传入
+    state => ({ headTitle: state.headTitle, user:state.user }),
+    {logout}
+)(HeaderRouter);

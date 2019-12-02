@@ -252,6 +252,95 @@
         2.对组件的 新/旧 state 和 props 中的数据进行 浅比较，如果都没有发生变化，那么shouldComponentUpdate() 方     法将返回 false ，否则返回 true
         3.一旦shouldComponentUpdate() 返回false ，组件将不再执行用户更新的 render() 函数
 
+    28.redux的学习
+        1.redux 是什么？
+            1）redux是一个独立专门用于做状态管理的JS 库（不是 react 插件库）
+            2）它可以用在 react、 angular、 vue等项目中，但基本与react配合使用
+            3）作用：集中式管理 react 应用中多个组件共享的状态
+        2.什么情况下使用 redux 
+            1）总体原则能不用就不用，如果不用的情况下，开发比较吃力，才使用、
+            2）某个组件的状态需要共享
+            3）某个组件状态需要在任何地方都可以拿到
+            4）一个组件需要改变全局状态
+            5）一个组件需要改变另一个组件的状态
+        3.redux的核心 API 
+            1.createStore()
+                1）作用：创建包含指定reducer的store对象
+                2）编码：
+                    import { createStore } from 'redux';
+                    import reducer from './reducer';
+                    const store = createStore(reducer);
+            2.store对象
+                1）作用：redux库最核心的管理对象
+                2）它内部维护着：state ， reducer
+                3）核心方法： getState(), dispatch(action), subscribe(listener)
+                4）编码：store.getState(), store.dispatch({type:'INCREMENT', number}), store.subscribe(render)
+            3.applyMiddleware()
+                1）作用：应用上基于 redux 的中间件（插件库）
+                2）编码：
+                    import { createStore, applyMiddleware } from 'redux'
+                    import thunk from 'redux-thunk'  //redux异步中间件
+                    const store = createStore(
+                        counter,
+                        applyMiddleware(thunk) //应用异步中间件
+                    )
+            4.combineReducers()
+                1）作用：合并多个reducer函数
+                2）编码：
+                    export default combineReducers({
+                        user,
+                        chatUser,
+                        chat
+                    })
+        4.redux的三个核心概念
+            1.action
+                1）标识要执行行为的对象
+                2）包含两个方面的属性
+                    a.type：标识属性，值为字符串，唯一，必要属性
+                    b.xxx：数据属性，值类型任意，可选属性
+                3）例子：
+                    const action = {
+                        type:'INCREMENT',
+                        data:2
+                    }
+                4）Action Creator(创建Action 的工厂函数)
+                    const increment = (number) => ({type:'INCREMENT',data:number})
+            2.reducer
+                1）根据老的state 和 action， 产生新的 state 的 纯函数
+                2）样例
+                    export default function counter (state=0,action){
+                        switch(action.type){
+                            case 'INCREMENT':
+                                return state+action.data
+                            case 'DECREMENT':
+                                return state-action.date
+                            default:
+                                return state
+                        }
+                    }
+                3）注意
+                    a.返回一个新的状态函数
+                    b.不要修改原有的状态
+            3.store
+                1）将 state，action 与 reducer 联系在一起的对象
+                2）如何得到此对象？
+                    import { createStore } from 'redux';
+                    import reducer from './reducer';
+                    const store = createStore(reducer);
+                3）此对象的功能？
+                    getState() : 得到 state
+                    dispatch(action):分发action，触发reducer调用，产生新的state
+                    subscribe(listener):注册监听，当产生了新的state时，自动调用
+
+    29.图形图标的使用
+        1.若需要使用百度开源的图标库，需要安装 echarts、echarts-for-react
+            具体的使用方法 参照官网  https://echarts.apache.org/zh/index.html
+        2.阿里开源的图标库 G2 , 官方网址  https://antv.alipay.com/zh-cn/g2/3.x/index.html 
+            bizcharts ：基于 react 包装的 G2 图标库 使用需要安装 @antv/data-set 包
+            bizcharts 官网  https://bizcharts.net/products/bizCharts 
+        3.d3 国外免费可视化图标库
+            官网  https://d3js.org.cn/ 
+
 
 
 
@@ -287,6 +376,9 @@
                 收到响应自动执行函数调用的js代码，也就执行了提前定义好的回调函数，并得到了需要的结果数据
 
     6.组件的子元素（包括 标签、组件、文本），会通过 children 属性传递给 子组件
+
+    7.在使用 this.props.history.push('/xxx/xxx', {data}) 跳转页面，并且传递数据 到跳转的页面时，只能使用 BrowserRouter 作为总路由，
+        而不能使用 HashRouter 作为总路由，因为 HashRouter 不支持 this.props.history.push('/xxx/xxx') 不能传递数据
 
 
 

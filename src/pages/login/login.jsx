@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import propTypes from 'prop-types';
+
+import { login } from '../../redux/actions.js';
+import { connect } from 'react-redux';
 
 import './login.less'
 
@@ -9,16 +13,22 @@ import Logo from '../../assets/images/logo.png';
 import { Redirect } from 'react-router-dom';
 
 // 导入表单组件
-import { Form, Icon, Input, Button, message } from 'antd';
+import { Form, Icon, Input, Button } from 'antd';
 
 // 导入ajax请求文件
-import { ReqLogin } from '../../api/index.js';
+// import { ReqLogin } from '../../api/index.js';
 // 导入user存储文件
-import memoryUtils from '../../utils/memoryUtils.js';
-import storageUtils from '../../utils/storageUtils';
+// import memoryUtils from '../../utils/memoryUtils.js';
+// import storageUtils from '../../utils/storageUtils';
 
 class Login extends Component {
 
+    static propsTypes = {
+        // login 方法
+        login: propTypes.func.isRequired,
+        // 当前登陆的用户
+        user: propTypes.object.isRequired,
+    }
 
 
     handleSubmit = (event) => {
@@ -27,31 +37,32 @@ class Login extends Component {
 
         // 对所有表单数据进行验证
         this.props.form.validateFields((err, values) => {
-            if(!err){
+            if (!err) {
                 // console.log('表单验证成功',values);
                 // 发送ajax请求(登陆请求)
-                const { username,password } = values;
-                ReqLogin(username, password)
-                .then(data => {
-                    // console.log('成功了',Response.data);
-                    // 请求成功
-                    if(data.status === 0){
-                        message.success('请求成功');
-                        // 将user信息在内存中进行存储
-                        memoryUtils.user = data.data;
-                        // 将user信息在本地磁盘中进行存储
-                        storageUtils.saveUser(data.data);
-                        // 跳转到后台页面
-                        this.props.history.replace('/');
-                    } else{
-                        // 提示错误信息
-                        message.error(data.msg);
-                    }
-                })
+                const { username, password } = values;
+                this.props.login(username,password);
+                // ReqLogin(username, password)
+                //     .then(data => {
+                //         // console.log('成功了',Response.data);
+                //         // 请求成功
+                //         if (data.status === 0) {
+                //             message.success('请求成功');
+                //             // 将user信息在内存中进行存储
+                //             memoryUtils.user = data.data;
+                //             // 将user信息在本地磁盘中进行存储
+                //             storageUtils.saveUser(data.data);
+                //             // 跳转到后台页面
+                //             this.props.history.replace('/home');
+                //         } else {
+                //             // 提示错误信息
+                //             message.error(data.msg);
+                //         }
+                //     })
                 // .catch(error => {
                 //     console.log('失败了',error.message);
                 // });
-            } else{
+            } else {
                 console.log('验证失败');
             }
         });
@@ -73,13 +84,13 @@ class Login extends Component {
         // callback:验证的回调函数
         // 当callback不传参数时，默认表示验证通过
         // 当callback传参数时，根据验证规则是否匹配返回相关的信息
-        if(!value){
+        if (!value) {
             callback('密码不能为空');
-        } else if(value.length < 4){
-            callback('密码长度不能小于4位');
-        } else if(value.length > 12){
+        } else if (value.length < 2) {
+            callback('密码长度不能小于2位');
+        } else if (value.length > 12) {
             callback('密码长不能大于12位');
-        } else if(!/^[a-zA-Z0-9]+$/.test(value)){
+        } else if (!/^[a-zA-Z0-9]+$/.test(value)) {
             callback('用户名必须包含字母/数字/下划线');
         } else {
             callback(); //表示验证通过
@@ -90,12 +101,17 @@ class Login extends Component {
     render() {
         const form = this.props.form;
         const { getFieldDecorator } = form;
-        
+
         // 在渲染登陆页面时，判断内存中是否有 user 登陆的信息
         // 多存在 user的登陆信息，跳转到 后台管理界面
-        if(memoryUtils.user && memoryUtils.user._id){
-            return <Redirect to='/' />
+        if(this.props.user && this.props.user._id){
+            return <Redirect to='/home' />
         }
+
+
+        // if (memoryUtils.user && memoryUtils.user._id) {
+        //     return <Redirect to='/home' />
+        // }
         return (
             <div className='login-page'>
                 <header>
@@ -112,11 +128,11 @@ class Login extends Component {
                                     getFieldDecorator('username', {
                                         // 以下验证方法位声明式验证
                                         // rules是表单的验证规则
-                                        rules:[
-                                            {required:true , whitespace:true,message:'请输入用户名'},
-                                            {min:4,message:'用户名至少为4位'},
-                                            {max:12,message:'用户名最多为12位'},
-                                            {pattern:/^[a-zA-Z0-9]+$/,message:'用户名必须包含字母/数字/下划线'},
+                                        rules: [
+                                            { required: true, whitespace: true, message: '请输入用户名' },
+                                            { min: 1, message: '用户名至少为1位' },
+                                            { max: 12, message: '用户名最多为12位' },
+                                            // {pattern:/^[a-zA-Z0-9]+$/,message:'用户名必须包含字母/数字/下划线'},
                                         ]
                                     })(
                                         <Input
@@ -130,7 +146,7 @@ class Login extends Component {
                                 {
                                     getFieldDecorator('password', {
                                         // 以下方法为自定义验证
-                                        rules:[
+                                        rules: [
                                             {
                                                 validator: this.validPwd,
                                             }
@@ -161,4 +177,7 @@ class Login extends Component {
 // 通过Form.create方法创建将Login组件包裹起来，并且传入form参数，在form参数中可以实现表单数据的接受
 const WrapLogin = Form.create()(Login);
 
-export default WrapLogin;
+export default connect(
+    state => ({ user: state.user }),
+    { login }
+)(WrapLogin);
