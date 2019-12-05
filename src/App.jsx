@@ -17,7 +17,7 @@ class App extends React.Component{
             {/* Switch的作用的是：当路由匹配上一个后，就不再匹配后后面的路由了 */}
                 <Switch>
                     <Route path='/login' component={Login} ></Route>
-                    <Route exact path='/home' component={Admin} ></Route>
+                    {/* <Route exact path='/home' component={Admin} ></Route> */}
                     <Route path='/' component={Admin} ></Route>
                     {/* <Route component={NotFound} /> */}
                 </Switch>

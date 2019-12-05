@@ -380,6 +380,13 @@
     7.在使用 this.props.history.push('/xxx/xxx', {data}) 跳转页面，并且传递数据 到跳转的页面时，只能使用 BrowserRouter 作为总路由，
         而不能使用 HashRouter 作为总路由，因为 HashRouter 不支持 this.props.history.push('/xxx/xxx') 不能传递数据
 
+    8.在使用 create-react-app 脚手架开发的 web项目，开发完成后，运行 npm run build 在项目中生成 build 文件夹，加文件夹中的文件移到
+        后台，即可解决，生产环境的跨域问题
+
+    9.在使用 BrowserRouter 时的问题
+        A.问题：刷新某个路由路径时会出现 404 的错误
+        B.原因：项目根路径后的 path 路径会被当做后台路径处理，去请求对应的后台路径，但是后台却没有该路径，因此会出现 404 
+
 
 
 
@@ -390,6 +397,7 @@
 四、未解决的Bug 
     1.在修改商品界面中，所属类别 为自动获取数据
     2.在商品管理中，点击 详情 和 修改 按钮后，在点击返回按钮，无法返回到原有的页面
+    3.项目中的 BorwserRouter 为改成 HashRouter 
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
